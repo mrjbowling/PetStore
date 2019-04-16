@@ -20,9 +20,28 @@ namespace PetStore.Controllers
         }
 
         // GET: Pets
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder)
         {
-            return View(await _context.Pets.ToListAsync());
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["DateSortParm"] = sortOrder == "Price" ? "price_desc" : "Price";
+            var pets = from p in _context.Pets
+                           select p;
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    pets = pets.OrderByDescending(p => p.Name);
+                    break;
+                case "Price":
+                    pets = pets.OrderBy(p => p.Price);
+                    break;
+                case "price_desc":
+                    pets = pets.OrderByDescending(p => p.Price);
+                    break;
+                default:
+                    pets = pets.OrderBy(p => p.Name);
+                    break;
+            }
+            return View(await pets.AsNoTracking().ToListAsync());
         }
 
         // GET: Pets/Details/5

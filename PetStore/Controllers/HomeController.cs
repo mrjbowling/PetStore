@@ -11,7 +11,19 @@ namespace PetStore.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly PetContext _context;
+
+        public HomeController(PetContext context)
+        {
+            _context = context;
+        }
+
         public IActionResult Index()
+        {
+            return View();
+        }
+
+        public IActionResult About()
         {
             return View();
         }

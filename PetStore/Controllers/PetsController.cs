@@ -20,12 +20,36 @@ namespace PetStore.Controllers
         }
 
         // GET: Pets
-        public async Task<IActionResult> Index(string sortOrder)
+        public async Task<IActionResult> Index(
+    string sortOrder,
+    string currentFilter,
+    string searchString,
+    int? pageNumber)
         {
+            ViewData["CurrentSort"] = sortOrder;
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewData["DateSortParm"] = sortOrder == "Price" ? "price_desc" : "Price";
+            ViewData["PriceSortParm"] = sortOrder == "Price" ? "price_desc" : "Price";
+
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
             var pets = from p in _context.Pets
                            select p;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                pets = pets.Where(s => s.Name.Contains(searchString)
+                                       || s.Name.Contains(searchString));
+            }
+
             switch (sortOrder)
             {
                 case "name_desc":
@@ -41,7 +65,8 @@ namespace PetStore.Controllers
                     pets = pets.OrderBy(p => p.Name);
                     break;
             }
-            return View(await pets.AsNoTracking().ToListAsync());
+            int pageSize = 3;
+            return View(await PaginatedList<Pet>.CreateAsync(pets.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Pets/Details/5

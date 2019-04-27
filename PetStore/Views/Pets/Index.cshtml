@@ -61,7 +61,7 @@
                     @Html.DisplayFor(modelItem => item.Price)
                 </td>
                 <td>
-                <button>Buy</button>
+                <button  asp-area="" asp-controller="Carts" asp-action="Carts">Buy</button>
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |

@@ -16,6 +16,6 @@ namespace PetStore.Data
             modelBuilder.Entity<Pet>().ToTable("Pet");
         }
 
-        public DbSet<PetStore.Models.Cart> Cart { get; set; }
+       
     }
 }
